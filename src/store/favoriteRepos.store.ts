@@ -1,4 +1,5 @@
 import create from "zustand";
+import { persist } from "zustand/middleware";
 
 interface IFavoriteReposState {
   favoriteReposIds: number[];
@@ -6,18 +7,25 @@ interface IFavoriteReposState {
   removeFavoriteRepo(id: number): void;
 }
 
-export const useFavoriteReposStore = create<IFavoriteReposState>((set) => ({
-  favoriteReposIds: [],
-  addFavoriteRepo: (id: number) => {
-    set((state) => ({
-      favoriteReposIds: [...state.favoriteReposIds, id],
-    }));
-  },
-  removeFavoriteRepo: (id: number) => {
-    set((state) => ({
-      favoriteReposIds: state.favoriteReposIds.filter(
-        (repoId) => repoId !== id
-      ),
-    }));
-  },
-}));
+export const useFavoriteReposStore = create(
+  persist<IFavoriteReposState>(
+    (set) => ({
+      favoriteReposIds: [],
+      addFavoriteRepo: (id: number) => {
+        set((state) => ({
+          favoriteReposIds: [...state.favoriteReposIds, id],
+        }));
+      },
+      removeFavoriteRepo: (id: number) => {
+        set((state) => ({
+          favoriteReposIds: state.favoriteReposIds.filter(
+            (repoId) => repoId !== id
+          ),
+        }));
+      },
+    }),
+    {
+      name: "favorite-repos",
+    }
+  )
+);
